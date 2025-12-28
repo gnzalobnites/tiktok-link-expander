@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiador de Enlaces TikTok</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2.5em;
+            color: #333;
+        }
+
+        .input-container {
+            margin-top: 30px;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #urlInput {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #urlInput:focus {
+            border-color: #4CAF50;
+        }
+
+        .boton-central {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            align-self: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .boton-central:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .boton-central:active {
+            transform: scale(0.95);
+        }
+
+        .resultado-container {
+            margin-top: 30px;
+            width: 80%;
+            display: none;
+        }
+
+        #urlResultado {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            background-color: #e9f7ef;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            color: #2e7d32;
+            word-break: break-all;
+        }
+
+        .copiar-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .copiar-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .mensaje-error {
+            color: #f44336;
+            margin-top: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="titulo">
+        Limpiador de Enlaces TikTok
+    </div>
+    
+    <div class="input-container">
+        <input type="url" id="urlInput" placeholder="Pega aquí el enlace de TikTok" />
+        <button class="boton-central" onclick="limpiarEnlace()">
+            Limpiar Enlace
+        </button>
+    </div>
+    
+    <div class="mensaje-error" id="mensajeError"></div>
+    
+    <div class="resultado-container" id="resultadoContainer">
+        <input type="text" id="urlResultado" readonly />
+        <button class="copiar-btn" onclick="copiarEnlace()">
+            Copiar enlace limpio
+        </button>
+    </div>
+
+    <script>
+        function limpiarEnlace() {
+            const urlInput = document.getElementById('urlInput');
+            const mensajeError = document.getElementById('mensajeError');
+            const resultadoContainer = document.getElementById('resultadoContainer');
+            const urlResultado = document.getElementById('urlResultado');
+            
+            // Ocultar contenedores previos
+            resultadoContainer.style.display = 'none';
+            mensajeError.style.display = 'none';
+            
+            let url = urlInput.value.trim();
+            
+            if (!url) {
+                mostrarError('Por favor, ingresa un enlace de TikTok.');
+                return;
+            }
+            
+            try {
+                // Caso 1: Enlace corto de TikTok (vm.tiktok.com)
+                if (url.includes('vm.tiktok.com')) {
+                    // 🔁 Llamada a tu backend en Render
+                    const backendUrl = 'https://tiktok-link-expander.onrender.com/expand?url=' + encodeURIComponent(url);
+                    // const backendUrl = 'https://tu-servicio.onrender.com/expand?url=' + encodeURIComponent(url);
+                    // const backendUrl = 'http://localhost:10000/expand?url=' + encodeURIComponent(url);
+                    
+                    fetch(backendUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.error || 'Error del servidor');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.expanded) {
+                                urlResultado.value = data.expanded;
+                                resultadoContainer.style.display = 'block';
+                            } else {
+                                mostrarError(data.error || 'No se pudo limpiar el enlace.');
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            mostrarError('Error al procesar el enlace corto. Asegúrate de que sea válido.');
+                        });
+                    return; // Importante: salir porque la operación es asíncrona
+                }
+                
+                // Caso 2: Enlace largo de TikTok con parámetros de tracking
+                if (url.includes('tiktok.com') && url.includes('/video/')) {
+                    const urlObj = new URL(url);
+                    const cleanUrl = urlObj.origin + urlObj.pathname;
+                    urlResultado.value = cleanUrl;
+                    resultadoContainer.style.display = 'block';
+                    return;
+                }
+                
+                // Si no es un enlace de TikTok reconocido
+                mostrarError('El enlace ingresado no parece ser un enlace válido de TikTok.');
+                
+            } catch (e) {
+                mostrarError('URL inválida. Por favor, ingresa una URL correcta.');
+            }
+        }
+        
+        function mostrarError(mensaje) {
+            const mensajeError = document.getElementById('mensajeError');
+            mensajeError.textContent = mensaje;
+            mensajeError.style.display = 'block';
+        }
+        
+        function copiarEnlace() {
+            const urlResultado = document.getElementById('urlResultado');
+            urlResultado.select();
+            document.execCommand('copy');
+            
+            // Mostrar feedback visual
+            const botonCopiar = document.querySelector('.copiar-btn');
+            const textoOriginal = botonCopiar.textContent;
+            botonCopiar.textContent = '¡Copiado!';
+            setTimeout(() => {
+                botonCopiar.textContent = textoOriginal;
+            }, 2000);
+        }
+        
+        // Permitir pegar con Ctrl+V o Cmd+V
+        document.getElementById('urlInput').addEventListener('paste', function(e) {
+            setTimeout(limpiarEnlace, 100);
+        });
+    </script>
+</body>
+<footer style="
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.85em;
+    color: #777;
+    padding: 0 20px;
+    box-sizing: border-box;
+">
+    ¿Tienes sugerencias? Escríbeme a 
+    <a href="mailto:benitesgonzalogaston@gmail.com" style="color: #444; text-decoration: underline;">benitesgonzalogaston@gmail.com</a><br>
+    ¿Te sirve esta herramienta? 
+    <a href="https://www.buymeacoffee.com/gnzbenitesh" target="_blank" style="color: #FF5F5F; text-decoration: none; font-weight: bold;">
+        ☕ Invítame un café
+    </a>
+</footer>
+</html>
