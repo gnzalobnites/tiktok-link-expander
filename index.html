@@ -24,8 +24,33 @@
             color: #333;
         }
 
+        .instrucciones {
+            max-width: 80%;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin: 20px 0 30px;
+            font-size: 1em;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .instrucciones h3 {
+            margin-top: 0;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instrucciones ol {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
         .input-container {
-            margin-top: 30px;
+            margin-top: 0;
             width: 80%;
             display: flex;
             flex-direction: column;
@@ -112,6 +137,16 @@
     <div class="titulo">
         Limpiador de Enlaces de TikTok
     </div>
+
+    <div class="instrucciones">
+        <h3>🛠️ Cómo usarla:</h3>
+        <ol>
+            <li>Abre la app.</li>
+            <li>Pega el enlace de TikTok (corto o largo).</li>
+            <li>Haz clic en “Limpiar Enlace”.</li>
+            <li>Copia la URL limpia y úsala donde quieras.</li>
+        </ol>
+    </div>
     
     <div class="input-container">
         <input type="url" id="urlInput" placeholder="Pega aquí el enlace de TikTok" />
@@ -152,8 +187,6 @@
                 if (url.includes('vm.tiktok.com')) {
                     // 🔁 Llamada a tu backend en Render
                     const backendUrl = 'https://tiktok-link-expander.onrender.com/expand?url=' + encodeURIComponent(url);
-                    // const backendUrl = 'https://tu-servicio.onrender.com/expand?url=' + encodeURIComponent(url);
-                    // const backendUrl = 'http://localhost:10000/expand?url=' + encodeURIComponent(url);
                     
                     fetch(backendUrl)
                         .then(response => {
@@ -176,7 +209,7 @@
                             console.error(err);
                             mostrarError('Error al procesar el enlace corto. Asegúrate de que sea válido.');
                         });
-                    return; // Importante: salir porque la operación es asíncrona
+                    return;
                 }
                 
                 // Caso 2: Enlace largo de TikTok con parámetros de tracking
@@ -241,6 +274,3 @@
 </footer>
 
 </html>
-
-
-
