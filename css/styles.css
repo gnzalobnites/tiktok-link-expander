@@ -1,0 +1,171 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+.titulo {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 2.5em;
+    color: #333;
+}
+
+.instrucciones {
+    max-width: 80%;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin: 20px 0 30px;
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5;
+}
+
+.instrucciones h3 {
+    margin-top: 0;
+    color: #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instrucciones ol {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.input-container {
+    margin-top: 0;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#urlInput {
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#urlInput:focus {
+    border-color: #4CAF50;
+}
+
+.boton-central {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    align-self: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.boton-central:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.boton-central:active {
+    transform: scale(0.95);
+}
+
+.resultado-container {
+    margin-top: 30px;
+    width: 80%;
+    display: none;
+}
+
+#urlResultado {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    background-color: #e9f7ef;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    color: #2e7d32;
+    word-break: break-all;
+}
+
+.botones-resultado {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.copiar-btn {
+    padding: 10px 20px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    flex: 1;
+}
+
+.copiar-btn:hover {
+    background-color: #1976D2;
+}
+
+.borrar-btn {
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    flex: 1;
+}
+
+.borrar-btn:hover {
+    background-color: #d32f2f;
+}
+
+.mensaje-error {
+    color: #f44336;
+    margin-top: 10px;
+    font-size: 1.1em;
+    text-align: center;
+    display: none;
+}
+
+footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.85em;
+    color: #777;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+footer a {
+    color: #444;
+    text-decoration: underline;
+}
+
+footer a[href*="buymeacoffee"] {
+    color: #FF5F5F;
+    text-decoration: none;
+    font-weight: bold;
+}
