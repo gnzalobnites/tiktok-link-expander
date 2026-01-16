@@ -19,7 +19,9 @@ function limpiarEnlace() {
         // Caso 1: Enlace corto de TikTok (vm.tiktok.com)
         if (url.includes('vm.tiktok.com')) {
             //  Llamada a tu backend en Render
-            const backendUrl = 'https://tiktok-link-expander.onrender.com/expand?url=' + encodeURIComponent(url);
+            // const backendUrl = 'https://tiktok-link-expander.onrender.com/expand?url=' + encodeURIComponent(url);
+            const backendUrl = 'https://tiktok-link-expander-1ut6.onrender.com/expand?url=' + encodeURIComponent(url);
+            
             
             fetch(backendUrl)
                 .then(response => {
@@ -40,12 +42,12 @@ function limpiarEnlace() {
                 })
                 .catch(err => {
                     console.error(err);
-                    mostrarError('Error al procesar el enlace corto. Asegúrate de que sea válido.');
+                    mostrarError('Error al procesar el enlace corto. AsegÃºrate de que sea vÃ¡lido.');
                 });
             return;
         }
         
-        // Caso 2: Enlace largo de TikTok con parámetros de tracking
+        // Caso 2: Enlace largo de TikTok con parÃ¡metros de tracking
         if (url.includes('tiktok.com') && url.includes('/video/')) {
             const urlObj = new URL(url);
             const cleanUrl = urlObj.origin + urlObj.pathname;
@@ -55,10 +57,10 @@ function limpiarEnlace() {
         }
         
         // Si no es un enlace de TikTok reconocido
-        mostrarError('El enlace ingresado no parece ser un enlace válido de TikTok.');
+        mostrarError('El enlace ingresado no parece ser un enlace vÃ¡lido de TikTok.');
         
     } catch (e) {
-        mostrarError('URL inválida. Por favor, ingresa una URL correcta.');
+        mostrarError('URL invÃ¡lida. Por favor, ingresa una URL correcta.');
     }
 }
 
@@ -76,7 +78,7 @@ function copiarEnlace() {
     // Mostrar feedback visual
     const botonCopiar = document.querySelector('.copiar-btn');
     const textoOriginal = botonCopiar.textContent;
-    botonCopiar.textContent = '\u00A1Copiado!';  // \u00A1 es el código Unicode para "¡"
+    botonCopiar.textContent = '\u00A1Copiado!';  // \u00A1 es el cÃ³digo Unicode para "Â¡"
     setTimeout(() => {
         botonCopiar.textContent = textoOriginal;
     }, 2000);
@@ -105,4 +107,5 @@ function borrarResultado() {
 // Permitir pegar con Ctrl+V o Cmd+V
 document.getElementById('urlInput').addEventListener('paste', function(e) {
     setTimeout(limpiarEnlace, 100);
+
 });
