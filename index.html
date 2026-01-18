@@ -25,11 +25,11 @@
     <meta property="og:locale" content="es_ES">
     
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" href="favicon.ico">
     
     <title>CleanTik Link Cleaner</title>
     <link rel="stylesheet" href="css/styles.css">
@@ -74,7 +74,7 @@
         // Registrar Service Worker para PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('service-worker.js')
                     .then(registration => {
                         console.log('Service Worker registrado correctamente:', registration.scope);
                     })
@@ -97,7 +97,7 @@
         
         function mostrarBotonInstalacion() {
             // Solo mostrar si no está ya instalado
-            if (window.matchMedia('(display-mode: standalone)').matches) {
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
                 return;
             }
             
@@ -140,6 +140,26 @@
             const btn = document.getElementById('instalarBtn');
             if (btn) btn.style.display = 'none';
         }
+        
+        // Verificar si ya está instalado
+        window.addEventListener('load', () => {
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('App ya instalada como PWA');
+                const btn = document.getElementById('instalarBtn');
+                if (btn) btn.style.display = 'none';
+            }
+            
+            // Mostrar botón de instalación después de 3 segundos
+            setTimeout(mostrarBotonInstalacion, 3000);
+        });
+        
+        // Evento cuando se instala
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('PWA instalado correctamente');
+            const btn = document.getElementById('instalarBtn');
+            if (btn) btn.style.display = 'none';
+        });
     </script>
 
     <script src="js/script.js"></script>
