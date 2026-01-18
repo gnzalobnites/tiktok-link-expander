@@ -35,40 +35,54 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="titulo">
-        Limpiador de Enlaces de TikTok
-    </div>
+    <div class="contenedor-principal">
+        <div class="titulo">
+            Limpiador de Enlaces de TikTok
+        </div>
 
-    <div class="instrucciones">
-        <h3>🛠️ Cómo usarla:</h3>
-        <ol>
-            <li>Abre la app.</li>
-            <li>Pega el enlace de TikTok (corto o largo).</li>
-            <li>Haz clic en "Limpiar Enlace".</li>
-            <li>Copia la URL limpia y úsala donde quieras.</li>
-        </ol>
-    </div>
-    
-    <div class="input-container">
-        <input type="url" id="urlInput" placeholder="Pega aquí el enlace de TikTok" />
-        <button class="boton-central" onclick="limpiarEnlace()">
-            Limpiar Enlace
-        </button>
-    </div>
-    
-    <div class="mensaje-error" id="mensajeError"></div>
-    
-    <div class="resultado-container" id="resultadoContainer">
-        <input type="text" id="urlResultado" readonly />
-        <div class="botones-resultado">
-            <button class="copiar-btn" onclick="copiarEnlace()">
-                Copiar enlace limpio
-            </button>
-            <button class="borrar-btn" onclick="borrarResultado()">
-                Borrar
+        <div class="instrucciones">
+            <h3>🛠️ Cómo usarla:</h3>
+            <ol>
+                <li>Abre la app.</li>
+                <li>Pega el enlace de TikTok (corto o largo).</li>
+                <li>Haz clic en "Limpiar Enlace".</li>
+                <li>Copia la URL limpia y úsala donde quieras.</li>
+            </ol>
+        </div>
+        
+        <div class="input-container">
+            <input type="url" id="urlInput" placeholder="Pega aquí el enlace de TikTok" />
+            <button class="boton-central" onclick="limpiarEnlace()">
+                Limpiar Enlace
             </button>
         </div>
+        
+        <div class="mensaje-error" id="mensajeError"></div>
+        
+        <div class="resultado-container" id="resultadoContainer">
+            <input type="text" id="urlResultado" readonly />
+            <div class="botones-resultado">
+                <button class="copiar-btn" onclick="copiarEnlace()">
+                    Copiar enlace limpio
+                </button>
+                <button class="borrar-btn" onclick="borrarResultado()">
+                    Borrar
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenedor para el botón de instalación -->
+        <div class="footer-instalar" id="footerInstalarContainer"></div>
     </div>
+
+    <footer>
+        ¿Tienes sugerencias? Escríbeme a 
+        <a href="mailto:benitesgonzalogaston@gmail.com">benitesgonzalogaston@gmail.com</a><br>
+        ¿Te sirve esta herramienta? 
+        <a href="https://www.buymeacoffee.com/gnzbenitesh" target="_blank" rel="noopener">
+            ☕ Invítame un café
+        </a>
+    </footer>
 
     <script>
         // Registrar Service Worker para PWA
@@ -85,92 +99,99 @@
         }
         
         // Mostrar banner de instalación en Android/Chrome
+        let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             // Prevenir que Chrome muestre automáticamente el banner
             e.preventDefault();
             // Guardar el evento para mostrarlo más tarde
-            window.deferredPrompt = e;
+            deferredPrompt = e;
             
-            // Opcional: Mostrar un botón personalizado para instalar
+            // Mostrar el botón personalizado para instalar
             mostrarBotonInstalacion();
         });
         
         function mostrarBotonInstalacion() {
             // Solo mostrar si no está ya instalado
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                (window.navigator.standalone !== undefined && window.navigator.standalone)) {
                 return;
             }
             
-            // Crear botón de instalación si no existe
-            if (!document.getElementById('instalarBtn')) {
-                const instalarBtn = document.createElement('button');
-                instalarBtn.id = 'instalarBtn';
-                instalarBtn.innerHTML = '📲 Instalar App';
-                instalarBtn.style.cssText = `
-                    position: fixed;
-                    top: 10px;
-                    right: 10px;
-                    background: #4CAF50;
-                    color: white;
-                    border: none;
-                    padding: 10px 15px;
-                    border-radius: 20px;
-                    font-size: 0.9em;
-                    cursor: pointer;
-                    z-index: 1000;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                `;
-                instalarBtn.onclick = instalarApp;
-                document.body.appendChild(instalarBtn);
+            // Crear botón de instalación en el footer si no existe
+            if (!document.getElementById('instalarBtn') && deferredPrompt) {
+                const footerContainer = document.getElementById('footerInstalarContainer');
+                if (footerContainer) {
+                    const instalarBtn = document.createElement('button');
+                    instalarBtn.id = 'instalarBtn';
+                    instalarBtn.className = 'footer-instalar-btn';
+                    instalarBtn.innerHTML = '📲 Instalar como App';
+                    instalarBtn.onclick = instalarApp;
+                    footerContainer.appendChild(instalarBtn);
+                    
+                    // Añadir animación de entrada
+                    setTimeout(() => {
+                        instalarBtn.style.opacity = '1';
+                        instalarBtn.style.transform = 'translateY(0)';
+                    }, 100);
+                }
             }
         }
         
         function instalarApp() {
-            if (window.deferredPrompt) {
-                window.deferredPrompt.prompt();
-                window.deferredPrompt.userChoice.then((choiceResult) => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('Usuario instaló la PWA');
+                        // Cambiar texto del botón
+                        const btn = document.getElementById('instalarBtn');
+                        if (btn) {
+                            btn.innerHTML = '✅ ¡Instalada!';
+                            btn.style.background = '#2e7d32';
+                            btn.style.cursor = 'default';
+                            btn.onclick = null;
+                            setTimeout(() => {
+                                btn.style.display = 'none';
+                            }, 2000);
+                        }
                     }
-                    window.deferredPrompt = null;
+                    deferredPrompt = null;
                 });
             }
-            
-            // Ocultar botón después de hacer clic
-            const btn = document.getElementById('instalarBtn');
-            if (btn) btn.style.display = 'none';
         }
         
-        // Verificar si ya está instalado
+        // Verificar si ya está instalado al cargar
         window.addEventListener('load', () => {
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.navigator.standalone === true) {
+            // Detectar si ya está instalado como PWA
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOSStandalone = window.navigator.standalone === true;
+            
+            if (isStandalone || isIOSStandalone) {
                 console.log('App ya instalada como PWA');
                 const btn = document.getElementById('instalarBtn');
                 if (btn) btn.style.display = 'none';
+            } else {
+                // Mostrar botón de instalación después de 2 segundos
+                setTimeout(mostrarBotonInstalacion, 2000);
             }
-            
-            // Mostrar botón de instalación después de 3 segundos
-            setTimeout(mostrarBotonInstalacion, 3000);
         });
         
         // Evento cuando se instala
         window.addEventListener('appinstalled', (evt) => {
             console.log('PWA instalado correctamente');
             const btn = document.getElementById('instalarBtn');
-            if (btn) btn.style.display = 'none';
+            if (btn) {
+                btn.innerHTML = '✅ ¡Instalada!';
+                btn.style.background = '#2e7d32';
+                btn.style.cursor = 'default';
+                btn.onclick = null;
+                setTimeout(() => {
+                    btn.style.display = 'none';
+                }, 2000);
+            }
         });
     </script>
 
     <script src="js/script.js"></script>
-
-    <footer>
-        ¿Tienes sugerencias? Escríbeme a 
-        <a href="mailto:benitesgonzalogaston@gmail.com">benitesgonzalogaston@gmail.com</a><br>
-        ¿Te sirve esta herramienta? 
-        <a href="https://www.buymeacoffee.com/gnzbenitesh" target="_blank" rel="noopener">
-            ☕ Invítame un café
-        </a>
-    </footer>
 </body>
 </html>
