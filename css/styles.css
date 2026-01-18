@@ -6,17 +6,24 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+/* Contenedor principal que ocupa todo el espacio disponible */
+.contenedor-principal {
+    flex: 1 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    position: relative;
-    padding-bottom: 80px;
+    padding: 20px 0;
 }
 
 .titulo {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
     font-size: 2.5em;
     color: #333;
+    padding: 0 20px;
 }
 
 .instrucciones {
@@ -155,15 +162,55 @@ body {
     display: none;
 }
 
+/* Contenedor para el botón de instalación */
+.footer-instalar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+/* Botón de instalación en el footer */
+.footer-instalar-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.footer-instalar-btn:hover {
+    background: #45a049;
+    transform: translateY(0) scale(1.05);
+}
+
+.footer-instalar-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Footer siempre abajo */
 footer {
-    position: absolute;
-    bottom: 10px;
     width: 100%;
     text-align: center;
     font-size: 0.85em;
     color: #777;
-    padding: 0 20px;
+    padding: 20px;
     box-sizing: border-box;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 footer a {
@@ -181,15 +228,20 @@ footer a[href*="buymeacoffee"] {
 @media (display-mode: standalone) {
     body {
         padding-top: env(safe-area-inset-top, 20px);
-        padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 80px);
+        padding-bottom: env(safe-area-inset-bottom, 20px);
     }
     
     .titulo {
-        margin-top: max(30px, env(safe-area-inset-top, 30px));
+        margin-top: max(20px, env(safe-area-inset-top, 20px));
     }
     
     footer {
-        padding-bottom: env(safe-area-inset-bottom, 10px);
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+    
+    /* Ocultar botón de instalación si ya está instalado */
+    .footer-instalar-btn {
+        display: none !important;
     }
     
     /* Ocultar barra de dirección en iOS */
@@ -205,7 +257,8 @@ footer a[href*="buymeacoffee"] {
 @media (hover: none) and (pointer: coarse) {
     .boton-central,
     .copiar-btn,
-    .borrar-btn {
+    .borrar-btn,
+    .footer-instalar-btn {
         min-height: 44px;
         min-width: 44px;
     }
@@ -237,6 +290,30 @@ footer a[href*="buymeacoffee"] {
     .resultado-container {
         width: 600px;
     }
+    
+    .footer-instalar-btn {
+        padding: 14px 30px;
+        font-size: 1.1em;
+    }
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 480px) {
+    .titulo {
+        font-size: 2em;
+        margin-top: 15px;
+    }
+    
+    .footer-instalar-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        width: 90%;
+        max-width: 300px;
+    }
+    
+    .contenedor-principal {
+        padding: 15px 0;
+    }
 }
 
 /* Para iOS Safari - evitar estilos nativos */
@@ -247,4 +324,4 @@ input, button, textarea {
 
 input[type="url"], input[type="text"] {
     border-radius: 8px;
-}
+    }
