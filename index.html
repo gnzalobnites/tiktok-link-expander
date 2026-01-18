@@ -3,7 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Limpiador de Enlaces de TikTok</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#4CAF50">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="application-name" content="CleanTik Link Cleaner">
+    <meta name="apple-mobile-web-app-title" content="CleanTik">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="CleanTik Link Cleaner">
+    <meta property="og:description" content="Limpia enlaces de TikTok eliminando parámetros de tracking y expandiendo enlaces cortos (vm.tiktok.com).">
+    <meta property="og:image" content="https://gnzalobnites.github.io/tiktok-link-expander/clean-tik-og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gnzalobnites.github.io/tiktok-link-expander/">
+    <meta property="og:locale" content="es_ES">
+    
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <title>CleanTik Link Cleaner</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -42,13 +70,85 @@
         </div>
     </div>
 
+    <script>
+        // Registrar Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado correctamente:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+        
+        // Mostrar banner de instalación en Android/Chrome
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevenir que Chrome muestre automáticamente el banner
+            e.preventDefault();
+            // Guardar el evento para mostrarlo más tarde
+            window.deferredPrompt = e;
+            
+            // Opcional: Mostrar un botón personalizado para instalar
+            mostrarBotonInstalacion();
+        });
+        
+        function mostrarBotonInstalacion() {
+            // Solo mostrar si no está ya instalado
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                return;
+            }
+            
+            // Crear botón de instalación si no existe
+            if (!document.getElementById('instalarBtn')) {
+                const instalarBtn = document.createElement('button');
+                instalarBtn.id = 'instalarBtn';
+                instalarBtn.innerHTML = '📲 Instalar App';
+                instalarBtn.style.cssText = `
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 10px 15px;
+                    border-radius: 20px;
+                    font-size: 0.9em;
+                    cursor: pointer;
+                    z-index: 1000;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                `;
+                instalarBtn.onclick = instalarApp;
+                document.body.appendChild(instalarBtn);
+            }
+        }
+        
+        function instalarApp() {
+            if (window.deferredPrompt) {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario instaló la PWA');
+                    }
+                    window.deferredPrompt = null;
+                });
+            }
+            
+            // Ocultar botón después de hacer clic
+            const btn = document.getElementById('instalarBtn');
+            if (btn) btn.style.display = 'none';
+        }
+    </script>
+
     <script src="js/script.js"></script>
 
     <footer>
         ¿Tienes sugerencias? Escríbeme a 
         <a href="mailto:benitesgonzalogaston@gmail.com">benitesgonzalogaston@gmail.com</a><br>
         ¿Te sirve esta herramienta? 
-        <a href="https://www.buymeacoffee.com/gnzbenitesh" target="_blank">
+        <a href="https://www.buymeacoffee.com/gnzbenitesh" target="_blank" rel="noopener">
             ☕ Invítame un café
         </a>
     </footer>
