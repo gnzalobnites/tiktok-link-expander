@@ -1,16 +1,18 @@
 // service-worker.js
-const CACHE_NAME = 'cleantik-v2';
+const CACHE_NAME = 'cleantik-v3';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/js/script.js',
-  '/favicon.ico',
-  '/favicon-16x16.png',
-  '/favicon-32x32.png',
-  '/apple-touch-icon.png',
-  '/clean-tik-og.png',
-  '/site.webmanifest'
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/script.js',
+  './favicon.ico',
+  './favicon-16x16.png',
+  './favicon-32x32.png',
+  './apple-touch-icon.png',
+  './android-chrome-192x192.png',
+  './android-chrome-512x512.png',
+  './clean-tik-og.png',
+  './site.webmanifest'
 ];
 
 // Instalar Service Worker y cachear recursos
@@ -54,6 +56,18 @@ self.addEventListener('activate', event => {
 
 // Estrategia: Cache First, luego Network
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // Si es el manifest, servir directamente
+  if (url.pathname.endsWith('site.webmanifest')) {
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request);
+      })
+    );
+    return;
+  }
+  
   // Evitar peticiones a APIs externas y BuyMeACoffee
   if (event.request.url.includes('render.com') || 
       event.request.url.includes('buymeacoffee.com')) {
@@ -87,9 +101,9 @@ self.addEventListener('fetch', event => {
             return networkResponse;
           })
           .catch(() => {
-            // Si falla la red, podrías mostrar una página offline
+            // Si falla la red, mostrar página offline
             if (event.request.mode === 'navigate') {
-              return caches.match('/index.html');
+              return caches.match('./index.html');
             }
           });
       })
@@ -101,4 +115,18 @@ self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+// Enviar mensaje para actualizar
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    self.clients.matchAll().then(clients => {
+      clients.forEach(client => {
+        client.postMessage({
+          type: 'SW_UPDATED',
+          message: 'Nueva versión disponible'
+        });
+      });
+    })
+  );
 });
